@@ -1,4 +1,5 @@
-ta sources" : [
+{
+    "data sources" : [
         "http://www.gcmap.com/" ,
         "http://www.theodora.com/country_digraphs.html" ,
         "http://www.citypopulation.de/world/Agglomerations.html" ,
