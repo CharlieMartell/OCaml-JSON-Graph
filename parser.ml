@@ -22,7 +22,7 @@ type metros = {
   country       : string;
   continent     : string;
   (*timezone      : int;*)
-  (*coordinates   : coord;*)
+  coordinates   : coord;
   population    : int;
   region        : int;
 };;
@@ -30,22 +30,31 @@ type metros = {
 
 let metro_list = map_data_json |> member "metros" |> to_list;;
 let metro_test = List.map metro_list 
-    ~f:(fun map_data_json -> { 
-      code          = member "code" map_data_json |> to_string;
-      name          = member "name" map_data_json |> to_string;
-      country       = member "country" map_data_json |> to_string;
-      continent     = member "continent" map_data_json |> to_string;
-      (*timezone      = member "timezone" map_data_json |> to_int;*)
-      population    = member "population" map_data_json |> to_int;
-      region        = member "region" map_data_json |> to_int;
+    ~f:(fun x -> { 
+      code          = member "code" x |> to_string;
+      name          = member "name" x |> to_string;
+      country       = member "country" x |> to_string;
+      continent     = member "continent" x |> to_string;
+      (*timezone      = member "timezone" x |> to_int;*)
+      (*coordinates   = member "coordinates" x |> to_int;*)
+      population    = member "population" x |> to_int;
+      region        = member "region" x |> to_int;
 });;
-let metro_names = List.map metro_list ~f:(fun map_data_json -> member "name" map_data_json |> to_string);;
-(* Print the results of the parsing *)
-printf "data sources: %s\n" (String.concat ~sep:", " data_sources);
 
-(*
-printf "metro test: %s\n" (String.concat ~sep:", " ~f:(fun metro_test -> metro));
-printf "metro test: code: %s, name: %s, country: %s, continent: %s, timezone: %d, population: %d, region: %d\n" 
-metro.code, metro.name, metro.country, metro.continent, metro.timezone, metro.population, metro.region in List.iter f metro_test;;
-*)
+let metro_codes = List.map metro_test ~f:(fun x -> x.code);;
+let metro_names = List.map metro_test ~f:(fun x -> x.name);;
+let metro_countries = List.map metro_test ~f:(fun x -> x.country);;
+let metro_continents = List.map metro_test ~f:(fun x -> x.continent);;
+let metro_populations = List.map metro_test ~f:(fun x -> string_of_int x.population);;
+let metro_regions = List.map metro_test ~f:(fun x -> string_of_int x.region);;
+
+(* Print the results of the parsing *)
+(* Print data sources *)
+printf "data sources: %s\n" (String.concat ~sep:", " data_sources);
+(* Print metro data *)
+printf "metro codes: %s\n" (String.concat ~sep:", " metro_codes);
 printf "metro names: %s\n" (String.concat ~sep:", " metro_names);
+printf "metro countries: %s\n" (String.concat ~sep:", " metro_countries);
+printf "metro continents: %s\n" (String.concat ~sep:", " metro_continents);
+printf "metro population: %s\n" (String.concat ~sep:", " metro_populations);
+printf "metro region: %s\n" (String.concat ~sep:", " metro_regions);
