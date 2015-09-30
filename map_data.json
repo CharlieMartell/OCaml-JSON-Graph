@@ -13,7 +13,7 @@
             "name" : "Santiago" ,
             "country" : "CL" ,
             "continent" : "South America" ,
-            "timezone" : -4 ,
+            "timezone" : -4.0 ,
             "coordinates" : {"S" : 33, "W" : 71} ,
             "population" : 6000000 ,
             "region" : 1
@@ -22,7 +22,7 @@
             "name" : "Lima" ,
             "country" : "PE" ,
             "continent" : "South America" ,
-            "timezone" : -5 ,
+            "timezone" : -5.0 ,
             "coordinates" : {"S" : 12, "W" : 77} ,
             "population" : 9050000 ,
             "region" : 1
@@ -31,7 +31,7 @@
             "name" : "Mexico City" ,
             "country" : "MX" ,
             "continent" : "North America" ,
-            "timezone" : -6 ,
+            "timezone" : -6.0 ,
             "coordinates" : {"N" : 19, "W" : 99} ,
             "population" : 23400000 ,
             "region" : 1
@@ -40,7 +40,7 @@
             "name" : "Bogota" ,
             "country" : "CO" ,
             "continent" : "South America" ,
-            "timezone" : -5 ,
+            "timezone" : -5.0 ,
             "coordinates" : {"N" : 5, "W" : 74} ,
             "population" : 8600000 ,
             "region" : 1
@@ -49,7 +49,7 @@
             "name" : "Buenos Aires" ,
             "country" : "AR" ,
             "continent" : "South America" ,
-            "timezone" : -3 ,
+            "timezone" : -3.0 ,
             "coordinates" : {"S" : 35, "W" : 58} ,
             "population" : 13300000 ,
             "region" : 1
@@ -58,7 +58,7 @@
             "name" : "Sao Paulo" ,
             "country" : "BR" ,
             "continent" : "South America" ,
-            "timezone" : -3 ,
+            "timezone" : -3.0 ,
             "coordinates" : {"S" : 24, "W" : 47} ,
             "population" : 20900000 ,
             "region" : 1
@@ -67,7 +67,7 @@
             "name" : "Lagos" ,
             "country" : "NG" ,
             "continent" : "Africa" ,
-            "timezone" : 1 ,
+            "timezone" : 1.0 ,
             "coordinates" : {"N" : 7, "E" : 19} ,
             "population" : 11800000 ,
             "region" : 1
@@ -76,7 +76,7 @@
             "name" : "Kinshasa" ,
             "country" : "CD" ,
             "continent" : "Africa" ,
-            "timezone" : 1 ,
+            "timezone" : 1.0 ,
             "coordinates" : {"S" : 4, "E" : 15} ,
             "population" : 8900000 ,
             "region" : 1
@@ -85,7 +85,7 @@
             "name" : "Johannesburg" ,
             "country" : "ZA" ,
             "continent" : "Africa" ,
-            "timezone" : 2 ,
+            "timezone" : 2.0 ,
             "coordinates" : {"S" : 26, "E" : 28} ,
             "population" : 7550000 ,
             "region" : 1
@@ -94,7 +94,7 @@
             "name" : "Khartoum" ,
             "country" : "SD" ,
             "continent" : "Africa" ,
-            "timezone" : 3 ,
+            "timezone" : 3.0 ,
             "coordinates" : {"N" : 16, "E" : 33} ,
             "population" : 4975000 ,
             "region" : 1
@@ -103,7 +103,7 @@
             "name" : "Cairo" ,
             "country" : "EG" ,
             "continent" : "Africa" ,
-            "timezone" : 2 ,
+            "timezone" : 2.0 ,
             "coordinates" : {"N" : 30, "E" : 31} ,
             "population" : 15200000 ,
             "region" : 2
@@ -112,7 +112,7 @@
             "name" : "Algiers" ,
             "country" : "DZ" ,
             "continent" : "Africa" ,
-            "timezone" : 1 ,
+            "timezone" : 1.0 ,
             "coordinates" : {"N" : 37, "E" : 3} ,
             "population" : 3175000 ,
             "region" : 2
@@ -121,7 +121,7 @@
             "name" : "Madrid" ,
             "country" : "ES" ,
             "continent" : "Europe" ,
-            "timezone" : 1 ,
+            "timezone" : 1.0 ,
             "coordinates" : {"N" : 40, "W" : 4} ,
             "population" : 6200000 ,
             "region" : 3
@@ -130,7 +130,7 @@
             "name" : "London" ,
             "country" : "UK" ,
             "continent" : "Europe" ,
-            "timezone" : 0 ,
+            "timezone" : 0.0 ,
             "coordinates" : {"N" : 52, "W" : 0} ,
             "population" : 12400000 ,
             "region" : 3
@@ -139,7 +139,7 @@
             "name" : "Paris" ,
             "country" : "FR" ,
             "continent" : "Europe" ,
-            "timezone" : 1 ,
+            "timezone" : 1.0 ,
             "coordinates" : {"N" : 49, "E" : 2} ,
             "population" : 10400000 ,
             "region" : 3
@@ -148,7 +148,7 @@
             "name" : "Milan" ,
             "country" : "IT" ,
             "continent" : "Europe" ,
-            "timezone" : 1 ,
+            "timezone" : 1.0 ,
             "coordinates" : {"N" : 45, "E" : 9} ,
             "population" : 3575000 ,
             "region" : 3
@@ -157,7 +157,7 @@
             "name" : "Essen" ,
             "country" : "DE" ,
             "continent" : "Europe" ,
-            "timezone" : 1 ,
+            "timezone" : 1.0 ,
             "coordinates" : {"N" : 51, "E" : 7} ,
             "population" : 589900 ,
             "region" : 3
@@ -166,7 +166,7 @@
             "name" : "St. Petersburg" ,
             "country" : "RU" ,
             "continent" : "Europe" ,
-            "timezone" : 3 ,
+            "timezone" : 3.0 ,
             "coordinates" : {"N" : 60, "E" : 30} ,
             "population" : 4775000 ,
             "region" : 3
@@ -175,7 +175,7 @@
             "name" : "Moscow" ,
             "country" : "RU" ,
             "continent" : "Europe" ,
-            "timezone" : 3 ,
+            "timezone" : 3.0 ,
             "coordinates" : {"N" : 56, "E" : 38} ,
             "population" : 13600000 ,
             "region" : 2
@@ -184,7 +184,7 @@
             "name" : "Istanbul" ,
             "country" : "TR" ,
             "continent" : "Europe" ,
-            "timezone" : 2 ,
+            "timezone" : 2.0 ,
             "coordinates" : {"N" : 41, "E" : 29} ,
             "population" : 12800000 ,
             "region" : 2
@@ -211,7 +211,7 @@
             "name" : "Riyadh" ,
             "country" : "SA" ,
             "continent" : "Asia" ,
-            "timezone" : 3 ,
+            "timezone" : 3.0 ,
             "coordinates" : {"N" : 25, "E" : 47} ,
             "population" : 5100000 ,
             "region" : 2
@@ -220,7 +220,7 @@
             "name" : "Karachi" ,
             "country" : "PK" ,
             "continent" : "Asia" ,
-            "timezone" : 5 ,
+            "timezone" : 5.0 ,
             "coordinates" : {"N" : 25, "E" : 67} ,
             "population" : 16200000 ,
             "region" : 2
@@ -265,7 +265,7 @@
             "name" : "Bangkok" ,
             "country" : "TH" ,
             "continent" : "Asia" ,
-            "timezone" : 7 ,
+            "timezone" : 7.0 ,
             "coordinates" : {"N" : 14, "E" : 101} ,
             "population" : 8900000 ,
             "region" : 4
@@ -274,7 +274,7 @@
             "name" : "Hong Kong" ,
             "country" : "CH" ,
             "continent" : "Asia" ,
-            "timezone" : 8 ,
+            "timezone" : 8.0 ,
             "coordinates" : {"N" : 22, "E" : 114} ,
             "population" : 7050000 ,
             "region" : 4
@@ -283,7 +283,7 @@
             "name" : "Shanghai" ,
             "country" : "CH" ,
             "continent" : "Asia" ,
-            "timezone" : 8 ,
+            "timezone" : 8.0 ,
             "coordinates" : {"N" : 31, "E" : 121} ,
             "population" : 18400000 ,
             "region" : 4
@@ -292,7 +292,7 @@
             "name" : "Beijing" ,
             "country" : "CH" ,
             "continent" : "Asia" ,
-            "timezone" : 8 ,
+            "timezone" : 8.0 ,
             "coordinates" : {"N" : 40, "E" : 117} ,
             "population" : 13600000 ,
             "region" : 4
@@ -301,7 +301,7 @@
             "name" : "Seoul" ,
             "country" : "KR" ,
             "continent" : "Asia" ,
-            "timezone" : 9 ,
+            "timezone" : 9.0 ,
             "coordinates" : {"N" : 37, "E" : 126} ,
             "population" : 24200000 ,
             "region" : 4
@@ -310,7 +310,7 @@
             "name" : "Tokyo" ,
             "country" : "JP" ,
             "continent" : "Asia" ,
-            "timezone" : 9 ,
+            "timezone" : 9.0 ,
             "coordinates" : {"N" : 36, "E" : 140} ,
             "population" : 34000000 ,
             "region" : 4
@@ -319,7 +319,7 @@
             "name" : "Osaka" ,
             "country" : "JP" ,
             "continent" : "Asia" ,
-            "timezone" : 9 ,
+            "timezone" : 9.0 ,
             "coordinates" : {"N" : 35, "E" : 135} ,
             "population" : 16800000 ,
             "region" : 4
@@ -328,7 +328,7 @@
             "name" : "Taipei" ,
             "country" : "TW" ,
             "continent" : "Asia" ,
-            "timezone" : 8 ,
+            "timezone" : 8.0 ,
             "coordinates" : {"N" : 25, "E" : 121} ,
             "population" : 6800000 ,
             "region" : 4
@@ -337,7 +337,7 @@
             "name" : "Manila" ,
             "country" : "PH" ,
             "continent" : "Asia" ,
-            "timezone" : 8 ,
+            "timezone" : 8.0 ,
             "coordinates" : {"N" : 15, "E" : 121} ,
             "population" : 19600000 ,
             "region" : 4
@@ -346,7 +346,7 @@
             "name" : "Ho Chi Minh City" ,
             "country" : "VN" ,
             "continent" : "Asia" ,
-            "timezone" : 7 ,
+            "timezone" : 7.0 ,
             "coordinates" : {"N" : 11, "E" : 107} ,
             "population" : 6100000 ,
             "region" : 4
@@ -355,7 +355,7 @@
             "name" : "Jakarta" ,
             "country" : "ID" ,
             "continent" : "Asia" ,
-            "timezone" : 7 ,
+            "timezone" : 7.0 ,
             "coordinates" : {"S" : 6, "E" : 107} ,
             "population" : 15400000 ,
             "region" : 4
@@ -364,7 +364,7 @@
             "name" : "Sydney" ,
             "country" : "AU" ,
             "continent" : "Australia" ,
-            "timezone" : 10 ,
+            "timezone" : 10.0 ,
             "coordinates" : {"S" : 34, "E" : 151} ,
             "population" : 4475000 ,
             "region" : 4
@@ -373,7 +373,7 @@
             "name" : "Los Angeles" ,
             "country" : "US" ,
             "continent" : "North America" ,
-            "timezone" : -8 ,
+            "timezone" : -8.0 ,
             "coordinates" : {"N" : 34, "W" : 118} ,
             "population" : 17900000 ,
             "region" : 1
@@ -382,7 +382,7 @@
             "name" : "San Francisco" ,
             "country" : "US" ,
             "continent" : "North America" ,
-            "timezone" : -8 ,
+            "timezone" : -8.0 ,
             "coordinates" : {"N" : 38, "W" : 122} ,
             "population" : 7450000 ,
             "region" : 3
@@ -391,7 +391,7 @@
             "name" : "Chicago" ,
             "country" : "US" ,
             "continent" : "North America" ,
-            "timezone" : -6 ,
+            "timezone" : -6.0 ,
             "coordinates" : {"N" : 42, "W" : 88} ,
             "population" : 9850000 ,
             "region" : 3
@@ -400,7 +400,7 @@
             "name" : "Atlanta" ,
             "country" : "US" ,
             "continent" : "North America" ,
-            "timezone" : -5 ,
+            "timezone" : -5.0 ,
             "coordinates" : {"N" : 34, "W" : 84} ,
             "population" : 5700000 ,
             "region" : 3
@@ -409,7 +409,7 @@
             "name" : "Miami" ,
             "country" : "US" ,
             "continent" : "North America" ,
-            "timezone" : -5 ,
+            "timezone" : -5.0 ,
             "coordinates" : {"N" : 26, "W" : 80} ,
             "population" : 5400000 ,
             "region" : 1
@@ -418,7 +418,7 @@
             "name" : "Washington" ,
             "country" : "US" ,
             "continent" : "North America" ,
-            "timezone" : -5 ,
+            "timezone" : -5.0 ,
             "coordinates" : {"N" : 39, "W" : 77} ,
             "population" : 8250000 ,
             "region" : 3
@@ -427,7 +427,7 @@
             "name" : "New York" ,
             "country" : "US" ,
             "continent" : "North America" ,
-            "timezone" : -5 ,
+            "timezone" : -5.0 ,
             "coordinates" : {"N" : 41, "W" : 74} ,
             "population" : 22200000 ,
             "region" : 3
@@ -436,7 +436,7 @@
             "name" : "Toronto" ,
             "country" : "CA" ,
             "continent" : "North America" ,
-            "timezone" : -5 ,
+            "timezone" : -5.0 ,
             "coordinates" : {"N" : 44, "W" : 80} ,
             "population" : 5750000 ,
             "region" : 3

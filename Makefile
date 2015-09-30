@@ -3,7 +3,7 @@
 # Help for make commands:
 
 COMPILER := corebuild 
-FILE := parser.native
+FILE := cli.native
 
 help:
 	@echo "Use: 'make <target>' where <target> is one of:"
