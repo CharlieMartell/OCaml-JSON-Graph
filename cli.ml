@@ -2,6 +2,14 @@ open Core.Std
 open Yojson.Basic.Util;;
 open Unix
 
+let help = "Usage:\n"
+         ^ "    city <city> <data_element> (* Gets <data_element> of a given <city>\n"
+         ^ "                                <data_element> -> (code, name, country, \n"
+         ^ "                                continent, timezone, coordinates, *)\n"
+         ^ "                                population, region, all) *)\n"
+         ^ "    network <stats|data> <stat_element> (* <data> -> Gets all cities CSAir flies to\n"
+         ^ "                                         <stat_element> -> (TBD) *)\n"
+
 (* Class representing a datasource object *)
 class data_source (url_string : string) = object(self : 'self)
   method url = url_string;
@@ -27,7 +35,7 @@ class json_graph data = object(self : 'self)
   (* Data sources define where data comes from *)
   method data_sources = List.map 
                         (self#json |> member "data sources" |> to_list |> filter_string) 
-                        ~f:(fun x -> new data_source x )
+                        ~f:(fun x -> new data_source x)
   
   (* Populate a list of metro objects *)
   method metros = List.map 
@@ -36,16 +44,64 @@ class json_graph data = object(self : 'self)
 
 end;;
 
+(* Globals *)
+let graph = new json_graph "map_data.json"
+
+(* Splits command argument words referenced from 
+ *  Unix system programming in OCaml *)
+let split_words words =
+ let rec skip_blanks index =
+   if index < String.length words && words.[index] = ' '
+   then skip_blanks (index+1)
+   else index in
+ let rec split start index =
+   if index >= String.length words then
+     [String.sub words start (index-start)]
+   else if words.[index] = ' ' then
+     let index_two = skip_blanks index in
+     String.sub words start (index-start) :: split index_two index_two
+   else
+     split start (index+1) in
+ Array.of_list (split 0 0);;
+
+(* Parses city as first element in cli *)
+let parse_city cmds= 
+  if 3 >  Array.length cmds then help else
+  let city = cmds.(1) in 
+  let element = cmds.(2) in 
+  let city_data = List.find graph#metros ~f:(fun x -> x#name = city) in 
+  match city_data with 
+  | None -> "City not found!"
+  | Some x -> match element with 
+              | "code" -> x#code
+              | "name" -> x#name
+              | "country" -> x#country
+              | "continent" -> x#continent
+              | _ -> "Not yet Implemented"
+
+(* Parses network as first element in cli *)
+let parse_network cmds = 
+  if 2 >  Array.length cmds then help else
+  match cmds.(1) with
+  | "stats" -> "Not yet Implemented"
+  | _ -> (String.concat ~sep:", " (List.map graph#metros ~f:(fun x -> x#name)))
+
+(* Parse array of commands *)
+let parse_cmd cmds = 
+  if 0 = Array.length cmds then help else
+  match cmds.(0) with
+  | "network" -> parse_network cmds 
+  | "city" -> parse_city cmds
+  | _ -> help
+
 let cli =
-  let graph = new json_graph "map_data.json" in 
   try
     while true do
       print_string "CSAir $ ";
       let cmd = read_line () in 
-      printf "%s\n" (cmd);
-      List.iter graph#data_sources ~f:(fun x -> printf "%s, " (x#url));
-      List.iter graph#metros ~f:(fun x -> printf "%s, " (x#code));
-      printf "%s\n" (cmd);
+      let cmds = split_words cmd in 
+      let response = parse_cmd cmds in 
+      printf "%s\n" (response);
     done
   with End_of_file -> ()
 

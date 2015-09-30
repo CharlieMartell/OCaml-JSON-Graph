@@ -1,0 +1,6 @@
+open Core.Std
+open Yojson.Basic.Util;;
+open Unix
+
+let help_string = "(1) Get a list of all the cities that CSAir flies to\n"
+    ^ "(2) = Get specific information about a specific city in the CSAir route network.";;
