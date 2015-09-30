@@ -13,18 +13,44 @@ let help = "Usage:\n"
 (* Class representing a datasource object *)
 class data_source (url_string : string) = object(self : 'self)
   method url = url_string;
-end ;;
+end
+
+(* Define coordinate type *)
+class coordinates (data : Yojson.Basic.json) = object(self : 'self)
+
+  (* Define various coordinates to parse from json*)
+  method north  = match member "N" data with
+                  | `Null -> 0
+                  | _ -> member "N" data |> to_int
+  method south  = match member "S" data with
+                  | `Null -> 0
+                  | _ -> member "S" data |> to_int
+  method west   = match member "W" data with
+                  | `Null -> 0
+                  | _ -> member "W" data |> to_int
+  method east   = match member "E" data with
+                  | `Null -> 0
+                  | _ -> member "E" data |> to_int
+  method string_of = "{ North: " ^ Int.to_string self#north
+                   ^ " South: " ^ Int.to_string self#south 
+                   ^ " West: " ^ Int.to_string self#west 
+                   ^ " East: " ^ Int.to_string self#east ^ " }"
+end
 
 (* Class representing a metro object *)
 class metro (data : Yojson.Basic.json) = object(self : 'self)
 
   (* Member variables of metro object *)
-  method code = member "code" data |> to_string;
-  method name = member "name" data |> to_string;
-  method country = member "country" data |> to_string;
-  method continent = member "continent" data |> to_string;
+  method code        = member "code"        data |> to_string;
+  method name        = member "name"        data |> to_string;
+  method country     = member "country"     data |> to_string;
+  method continent   = member "continent"   data |> to_string;
+  method timezone    = member "timezone"    data |> to_float;
+  method coordinates = new coordinates (member "coordinates" data);
+  method population  = member "population"  data |> to_int;
+  method region      = member "region"      data |> to_int;
 
-end ;;
+end
 
 (* Class containing our graph of some json data *)
 class json_graph data = object(self : 'self)
@@ -73,27 +99,32 @@ let parse_city cmds=
   match city_data with 
   | None -> "City not found!"
   | Some x -> match element with 
-              | "code" -> x#code
-              | "name" -> x#name
-              | "country" -> x#country
-              | "continent" -> x#continent
-              | _ -> "Not yet Implemented"
+              | "code"        -> x#code
+              | "name"        -> x#name
+              | "country"     -> x#country
+              | "continent"   -> x#continent
+              | "timezone"    -> (Float.to_string x#timezone)
+              | "coordinates" -> x#coordinates#string_of
+              | "population"  -> (Int.to_string x#population)
+              | "region"      -> (Int.to_string x#region)
+              | _             -> "Not yet Implemented"
 
 (* Parses network as first element in cli *)
 let parse_network cmds = 
   if 2 >  Array.length cmds then help else
   match cmds.(1) with
   | "stats" -> "Not yet Implemented"
-  | _ -> (String.concat ~sep:", " (List.map graph#metros ~f:(fun x -> x#name)))
+  | _       -> (String.concat ~sep:", " (List.map graph#metros ~f:(fun x -> x#name)))
 
 (* Parse array of commands *)
 let parse_cmd cmds = 
   if 0 = Array.length cmds then help else
   match cmds.(0) with
   | "network" -> parse_network cmds 
-  | "city" -> parse_city cmds
-  | _ -> help
+  | "city"    -> parse_city cmds
+  | _         -> help
 
+(* Main cli loop *)
 let cli =
   try
     while true do
