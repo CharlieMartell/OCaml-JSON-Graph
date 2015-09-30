@@ -46,7 +46,7 @@
             "region" : 1
         } , {
             "code" : "BUE" ,
-            "name" : "Buenos Aires" ,
+            "name" : "Buenos_Aires" ,
             "country" : "AR" ,
             "continent" : "South America" ,
             "timezone" : -3.0 ,
@@ -55,7 +55,7 @@
             "region" : 1
         } , {
             "code" : "SAO" ,
-            "name" : "Sao Paulo" ,
+            "name" : "Sao_Paulo" ,
             "country" : "BR" ,
             "continent" : "South America" ,
             "timezone" : -3.0 ,
@@ -163,7 +163,7 @@
             "region" : 3
         } , {
             "code" : "LED" ,
-            "name" : "St. Petersburg" ,
+            "name" : "St._Petersburg" ,
             "country" : "RU" ,
             "continent" : "Europe" ,
             "timezone" : 3.0 ,
@@ -271,7 +271,7 @@
             "region" : 4
         } , {
             "code" : "HKG" ,
-            "name" : "Hong Kong" ,
+            "name" : "Hong_Kong" ,
             "country" : "CH" ,
             "continent" : "Asia" ,
             "timezone" : 8.0 ,
@@ -343,7 +343,7 @@
             "region" : 4
         } , {
             "code" : "SGN" ,
-            "name" : "Ho Chi Minh City" ,
+            "name" : "Ho_Chi_Minh_City" ,
             "country" : "VN" ,
             "continent" : "Asia" ,
             "timezone" : 7.0 ,
@@ -370,7 +370,7 @@
             "region" : 4
         } , {
             "code" : "LAX" ,
-            "name" : "Los Angeles" ,
+            "name" : "Los_Angeles" ,
             "country" : "US" ,
             "continent" : "North America" ,
             "timezone" : -8.0 ,
@@ -379,7 +379,7 @@
             "region" : 1
         } , {
             "code" : "SFO" ,
-            "name" : "San Francisco" ,
+            "name" : "San_Francisco" ,
             "country" : "US" ,
             "continent" : "North America" ,
             "timezone" : -8.0 ,
@@ -424,7 +424,7 @@
             "region" : 3
         } , {
             "code" : "NYC" ,
-            "name" : "New York" ,
+            "name" : "New_York" ,
             "country" : "US" ,
             "continent" : "North America" ,
             "timezone" : -5.0 ,

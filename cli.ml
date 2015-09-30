@@ -18,19 +18,17 @@ end
 (* Define coordinate type *)
 class coordinates (data : Yojson.Basic.json) = object(self : 'self)
 
+  method get_dir dir = match member dir data with
+                  | `Null -> 0
+                  | _ -> member dir data |> to_int;
+
   (* Define various coordinates to parse from json*)
-  method north  = match member "N" data with
-                  | `Null -> 0
-                  | _ -> member "N" data |> to_int
-  method south  = match member "S" data with
-                  | `Null -> 0
-                  | _ -> member "S" data |> to_int
-  method west   = match member "W" data with
-                  | `Null -> 0
-                  | _ -> member "W" data |> to_int
-  method east   = match member "E" data with
-                  | `Null -> 0
-                  | _ -> member "E" data |> to_int
+  method north  = self#get_dir "N"
+  method south  = self#get_dir "S"
+  method west   = self#get_dir "W"
+  method east   = self#get_dir "E"
+
+  (* Gets a string representation of class *)
   method string_of = "{ North: " ^ Int.to_string self#north
                    ^ " South: " ^ Int.to_string self#south 
                    ^ " West: " ^ Int.to_string self#west 
@@ -52,6 +50,15 @@ class metro (data : Yojson.Basic.json) = object(self : 'self)
 
 end
 
+(* Class representing a route object *)
+class route (data : Yojson.Basic.json) = object(self : 'self)
+
+  (* Member variables of route object *)
+  method ports    = member "ports"    data |> to_list;
+  method distance = member "distance" data |> to_string;
+
+end
+
 (* Class containing our graph of some json data *)
 class json_graph data = object(self : 'self)
 
@@ -68,6 +75,10 @@ class json_graph data = object(self : 'self)
                   (self#json |> member "metros" |> to_list) 
                   ~f:(fun x -> new metro x)
 
+  (* Populate a list of route objects *)
+  method routes = List.map 
+                  (self#json |> member "routes" |> to_list) 
+                  ~f:(fun x -> new route x)
 end;;
 
 (* Globals *)
@@ -133,7 +144,7 @@ let cli =
       let cmds = split_words cmd in 
       let response = parse_cmd cmds in 
       printf "%s\n" (response);
-    done
+      (* DEBUG: List.iter graph#routes ~f:(fun x -> List.iter x#ports (fun y -> printf "%s, " (y |> to_string)))*) done
   with End_of_file -> ()
 
 let () = 
