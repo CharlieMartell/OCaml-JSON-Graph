@@ -8,7 +8,10 @@ let help = "Usage:\n"
          ^ "                                continent, timezone, coordinates, *)\n"
          ^ "                                population, region, all) *)\n"
          ^ "    network <stats|data> <stat_element> (* <data> -> Gets all cities CSAir flies to\n"
-         ^ "                                         <stat_element> -> (TBD) *)\n"
+         ^ "                                         <stats> -> <stat_element> -> (longest_distance,\n"
+         ^ "                                         shortest_distance, average_distance,\n"
+         ^ "                                         biggest_city, smallest_city, average_size\n"
+         ^ "                                         continents, hub_cities) *)"
 
 (* Class representing a datasource object *)
 class data_source (url_string : string) = object(self : 'self)
@@ -18,6 +21,7 @@ end
 (* Define coordinate type *)
 class coordinates (data : Yojson.Basic.json) = object(self : 'self)
 
+  (* Gets a direction from data *)
   method get_dir dir = match member dir data with
                   | `Null -> 0
                   | _ -> member dir data |> to_int;
@@ -30,12 +34,14 @@ class coordinates (data : Yojson.Basic.json) = object(self : 'self)
 
   (* Gets a string representation of class *)
   method string_of = "{ North: " ^ Int.to_string self#north
-                   ^ " South: " ^ Int.to_string self#south 
-                   ^ " West: " ^ Int.to_string self#west 
-                   ^ " East: " ^ Int.to_string self#east ^ " }"
+                   ^ " South: "  ^ Int.to_string self#south 
+                   ^ " West: "   ^ Int.to_string self#west 
+                   ^ " East: "   ^ Int.to_string self#east ^ " }"
 end
 
-(* Class representing a metro object *)
+(* Class representing a metro object 
+  * Constructs from: data : Yojson.Basic.json
+  *                  routes : route List  *)
 class metro (data : Yojson.Basic.json) = object(self : 'self)
 
   (* Member variables of metro object *)
@@ -47,15 +53,19 @@ class metro (data : Yojson.Basic.json) = object(self : 'self)
   method coordinates = new coordinates (member "coordinates" data);
   method population  = member "population"  data |> to_int;
   method region      = member "region"      data |> to_int;
-
+  
 end
 
-(* Class representing a route object *)
+(* Class representing a route object 
+  * Constructs from: data : Yojson.Basic.json *)
 class route (data : Yojson.Basic.json) = object(self : 'self)
 
   (* Member variables of route object *)
-  method ports    = member "ports"    data |> to_list;
-  method distance = member "distance" data |> to_string;
+  val ports        = data |> member "ports"    |> to_list |> filter_string;
+  method ports     = ports
+  method distance  = data |> member "distance" |> to_int;
+  method src_metro = (Array.of_list ports).(0)
+  method dst_metro = (Array.of_list ports).(0)
 
 end
 
@@ -67,19 +77,62 @@ class json_graph data = object(self : 'self)
 
   (* Data sources define where data comes from *)
   method data_sources = List.map 
-                        (self#json |> member "data sources" |> to_list |> filter_string) 
-                        ~f:(fun x -> new data_source x)
-  
-  (* Populate a list of metro objects *)
-  method metros = List.map 
-                  (self#json |> member "metros" |> to_list) 
-                  ~f:(fun x -> new metro x)
+                        (self#json |> member "data sources" 
+                                   |> to_list |> filter_string) 
+                        ~f:(fun data -> new data_source data)
 
   (* Populate a list of route objects *)
   method routes = List.map 
                   (self#json |> member "routes" |> to_list) 
-                  ~f:(fun x -> new route x)
-end;;
+                  ~f:(fun data -> new route data)
+  
+  (* Populate a list of metro objects *)
+  method metros = List.map 
+                  (self#json |> member "metros" |> to_list) 
+                  ~f:(fun data -> new metro data)
+
+
+  (* Methods for statistical data *)
+  (* the longest single flight in the network *)
+  method longest_distance = Int.to_string (
+    let distances : int list = List.map self#routes 
+                                ~f:(fun route -> route#distance) in 
+    let max_list lst = List.fold_left ~f:(fun acc x -> max acc x) ~init:0 lst in 
+    max_list distances)
+
+  (* the shortest single flight in the network *)
+  method shortest_distance = Int.to_string (
+    let distances : int list = List.map self#routes 
+                                ~f:(fun route -> route#distance) in 
+    let min_list lst = List.fold_left ~f:(fun acc x -> min acc x) ~init:999999 lst in 
+    min_list distances)
+
+  (* the average distance of all flights in the network *)
+  method average_distance = "Not yet Implemented"
+                             (* Float.to_string (
+    let distances : int list = List.map self#routes 
+                                ~f:(fun route -> route#distance) in 
+    let avg_list lst = Float.of_int (List.fold_left (+) 0 lst) /. 
+                       Float.of_int (List.length lst) in 
+    avg_list distances)*)
+
+  (* the biggest city (by population) served by CSAir *)
+  method biggest_city = "Not yet implemented"
+
+  (* the smallest city (by population) served by CSAir *)
+  method smallest_city = "Not yet implemented"
+
+  (* the average size (by population) of all the cities served by CSAir *)
+  method average_size = "Not yet implemented"
+
+  (* a list of the continents served by CSAir and which cities are in them *)
+  method continents = "Not yet implemented"
+
+  (* identifying CSAir's hub cities – 
+   * the cities that have the most direct connections. *)
+  method hub_cities = "Not yet implemented"
+
+end
 
 (* Globals *)
 let graph = new json_graph "map_data.json"
@@ -109,23 +162,47 @@ let parse_city cmds=
   let city_data = List.find graph#metros ~f:(fun x -> x#name = city) in 
   match city_data with 
   | None -> "City not found!"
-  | Some x -> match element with 
-              | "code"        -> x#code
-              | "name"        -> x#name
-              | "country"     -> x#country
-              | "continent"   -> x#continent
-              | "timezone"    -> (Float.to_string x#timezone)
-              | "coordinates" -> x#coordinates#string_of
-              | "population"  -> (Int.to_string x#population)
-              | "region"      -> (Int.to_string x#region)
-              | _             -> "Not yet Implemented"
+  | Some city -> 
+      match element with 
+        | "code"        -> "code: "        ^ city#code
+        | "name"        -> "name: "        ^ city#name
+        | "country"     -> "country: "     ^ city#country
+        | "continent"   -> "continent: "   ^ city#continent
+        | "timezone"    -> "timezone: "    ^ Float.to_string city#timezone
+        | "coordinates" -> "coordinates: " ^ city#coordinates#string_of
+        | "population"  -> "population: "  ^ Int.to_string city#population
+        | "region"      -> "region: "      ^ Int.to_string city#region
+        | "all"         -> "code: "        ^ city#code                     ^ ", " ^
+                           "name: "        ^ city#name                     ^ ", " ^
+                           "country: "     ^ city#country                  ^ ", " ^
+                           "continent: "   ^ city#continent                ^ ", " ^
+                           "timezone: "    ^ Float.to_string city#timezone ^ ", " ^
+                           "coordinates: " ^ city#coordinates#string_of    ^ ", " ^
+                           "population: "  ^ Int.to_string city#population ^ ", " ^
+                           "region: "      ^ Int.to_string city#region     ^ ", "
+        | _             -> "Invalid Option"
+
+(* Parses stat_elements from second element in cli *)
+let parse_stat_elements cmds = 
+  match cmds.(2) with
+  | "longest_distance"  -> graph#longest_distance
+  | "shortest_distance" -> graph#shortest_distance
+  | "average_distance"  -> graph#average_distance
+  | "biggest_city"      -> graph#biggest_city
+  | "smallest_city"     -> graph#smallest_city
+  | "average_size"      -> graph#average_size
+  | "continents"        -> graph#continents
+  | "hub_cities"        -> graph#hub_cities
+  | _                   -> help
 
 (* Parses network as first element in cli *)
 let parse_network cmds = 
   if 2 >  Array.length cmds then help else
   match cmds.(1) with
-  | "stats" -> "Not yet Implemented"
-  | _       -> (String.concat ~sep:", " (List.map graph#metros ~f:(fun x -> x#name)))
+  | "stats" -> parse_stat_elements cmds 
+  | "data"  -> (String.concat ~sep:", " 
+                       (List.map graph#metros ~f:(fun x -> x#name)))
+  | _       -> help
 
 (* Parse array of commands *)
 let parse_cmd cmds = 
@@ -144,7 +221,7 @@ let cli =
       let cmds = split_words cmd in 
       let response = parse_cmd cmds in 
       printf "%s\n" (response);
-      (* DEBUG: List.iter graph#routes ~f:(fun x -> List.iter x#ports (fun y -> printf "%s, " (y |> to_string)))*) done
+    done
   with End_of_file -> ()
 
 let () = 
