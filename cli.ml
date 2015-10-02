@@ -91,43 +91,70 @@ class json_graph data = object(self : 'self)
                   (self#json |> member "metros" |> to_list) 
                   ~f:(fun data -> new metro data)
 
-
   (* Methods for statistical data *)
   (* the longest single flight in the network *)
   method longest_distance = Int.to_string (
-    let distances : int list = List.map self#routes 
-                                ~f:(fun route -> route#distance) in 
+    let distances = List.map self#routes ~f:(fun r -> r#distance) in 
     let max_list lst = List.fold_left ~f:(fun acc x -> max acc x) ~init:0 lst in 
     max_list distances)
 
   (* the shortest single flight in the network *)
   method shortest_distance = Int.to_string (
-    let distances : int list = List.map self#routes 
-                                ~f:(fun route -> route#distance) in 
-    let min_list lst = List.fold_left ~f:(fun acc x -> min acc x) ~init:999999 lst in 
+    let distances = List.map self#routes ~f:(fun r -> r#distance) in 
+    let min_list lst = List.fold_left ~f:(fun acc x -> min acc x) ~init:99999999 lst in 
     min_list distances)
 
   (* the average distance of all flights in the network *)
-  method average_distance = "Not yet Implemented"
-                             (* Float.to_string (
-    let distances : int list = List.map self#routes 
-                                ~f:(fun route -> route#distance) in 
-    let avg_list lst = Float.of_int (List.fold_left (+) 0 lst) /. 
-                       Float.of_int (List.length lst) in 
-    avg_list distances)*)
+  method average_distance = Float.to_string (
+    let distances = List.map self#routes ~f:(fun r -> r#distance) in 
+    let rec sum l = match l with | [] -> 0 | h::t -> h + (sum t) in 
+    let distance_sum = sum distances in 
+    Float.of_int distance_sum /. Float.of_int (List.length distances))
 
   (* the biggest city (by population) served by CSAir *)
-  method biggest_city = "Not yet implemented"
+  method biggest_city = let max_pop = (
+    let populations = List.map self#metros ~f:(fun m -> m#population) in 
+    let max_list lst = List.fold_left ~f:(fun acc x -> max acc x) ~init:0 lst in 
+    max_list populations) in 
+      let biggest_cities = List.filter self#metros ~f:(fun m -> m#population = max_pop) in
+        match List.hd biggest_cities with 
+        | Some metro -> metro#name ^ " - population: " ^ Int.to_string max_pop
+        | None -> "No Biggest city found"
 
   (* the smallest city (by population) served by CSAir *)
-  method smallest_city = "Not yet implemented"
+  method smallest_city = let min_pop = (
+    let populations = List.map self#metros ~f:(fun m -> m#population) in 
+    let min_lst lst = List.fold_left ~f:(fun acc x -> min acc x) ~init:99999999 lst in 
+    min_lst populations) in 
+      let biggest_cities = List.filter self#metros ~f:(fun m -> m#population = min_pop) in
+        match List.hd biggest_cities with 
+        | Some metro -> metro#name ^ " - population : " ^ Int.to_string min_pop
+        | None -> "No Biggest city found"
 
   (* the average size (by population) of all the cities served by CSAir *)
-  method average_size = "Not yet implemented"
+  method average_size = Float.to_string (
+    let populations = List.map self#metros ~f:(fun m -> m#population) in 
+    let rec sum l = match l with | [] -> 0 | h::t -> h + (sum t) in 
+    let population_sum = sum populations in 
+    Float.of_int population_sum /. Float.of_int (List.length populations))
 
   (* a list of the continents served by CSAir and which cities are in them *)
-  method continents = "Not yet implemented"
+  method continents = 
+    let filter_continent continent = 
+      List.map 
+        (List.filter 
+          self#metros 
+          ~f:(fun m -> m#continent = continent))
+        ~f:(fun m -> m#name) in 
+    let sep_cities city_list= String.concat ~sep:", " city_list in 
+    "North America: " ^ sep_cities (filter_continent "North America") ^ "\n" ^
+    "South America: " ^ sep_cities (filter_continent "South America") ^ "\n" ^
+    "Africa: "        ^ sep_cities (filter_continent "Africa")        ^ "\n" ^
+    "Europe: "        ^ sep_cities (filter_continent "Europe")        ^ "\n" ^
+    "Asia: "          ^ sep_cities (filter_continent "Asia")          ^ "\n" ^
+    "Australia: "     ^ sep_cities (filter_continent "Australia")
 
+    
   (* identifying CSAir's hub cities – 
    * the cities that have the most direct connections. *)
   method hub_cities = "Not yet implemented"
