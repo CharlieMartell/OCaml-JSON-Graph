@@ -159,8 +159,24 @@ class json_graph data = object(self : 'self)
     
   (* identifying CSAir's hub cities – 
    * the cities that have the most direct connections. *)
-  method hub_cities = "Not yet implemented"
-
+  method hub_cities = 
+  (* flattens a list of lists *)
+  let rec flatten = function | [] -> [] | l::r -> l @ flatten r in 
+  let port_list = flatten (List.map self#routes ~f:(fun r -> r#ports)) in 
+  (* finds most frequent element in a list *)
+  let most_frequent list =
+  let rec loop cur_max max cur count = function
+    | [] -> if count > max then cur else cur_max
+    | x::xs ->
+        if cur = x then loop cur_max max cur (count + 1) xs
+        else if count > max then loop cur count x 1 xs
+        else loop cur_max max x 1 xs in
+  match List.sort Pervasives.compare list with
+   | [] -> None
+   | x::xs -> Some (loop x 0 x 1 xs) in 
+  let hub_option = most_frequent port_list in 
+  match hub_option with | Some x -> x | None -> ""
+  
 end
 
 (* Globals *)
@@ -240,6 +256,9 @@ let parse_flight cmds =
   let gcmap_url = "http://www.gcmap.com/mapui?P=" in 
   gcmap_url ^ String.concat ~sep:",+" flights
 
+let run_tests = 
+  "Testing graph#continents"
+
 (* Parse array of commands *)
 let parse_cmd cmds = 
   if 0 = Array.length cmds then help else
@@ -247,6 +266,7 @@ let parse_cmd cmds =
   | "network" -> parse_network cmds 
   | "city"    -> parse_city cmds
   | "flight"  -> parse_flight cmds
+  | "tests"   -> run_tests 
   | _         -> help
 
 (* Main cli loop *)
@@ -263,4 +283,3 @@ let cli =
 
 let () = 
   cli 
-
