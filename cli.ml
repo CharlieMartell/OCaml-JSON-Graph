@@ -14,6 +14,7 @@ let help = "Usage:\n"
          ^ "\n                                         continents, hub_cities) *)"
          ^ "\n    flight <routes> (* <routes> -> a route to be represented on gcmap.com"
          ^ "\n                       routes ex: LIM-MEX,LIM-BOG,MEX-LAX *)"
+         ^ "\n    tests (* Run tests *)"
 
 (* Class representing a datasource object *)
 class data_source (url_string : string) = object(self : 'self)
@@ -229,6 +230,7 @@ let parse_city cmds=
 
 (* Parses stat_elements from second element in cli *)
 let parse_stat_elements cmds = 
+  if 3 >  Array.length cmds then help else
   match cmds.(2) with
   | "longest_distance"  -> graph#longest_distance
   | "shortest_distance" -> graph#shortest_distance
@@ -256,8 +258,40 @@ let parse_flight cmds =
   let gcmap_url = "http://www.gcmap.com/mapui?P=" in 
   gcmap_url ^ String.concat ~sep:",+" flights
 
+(* Run test cases *)
 let run_tests = 
-  "Testing graph#continents"
+  let tests = "Testing: \n" in 
+  let tester expected result = 
+    if expected = result then "Passed\n" else "Failed\n" in 
+  let hub_cities_test = "hub_cities -> " 
+    ^ tester "HKG" graph#hub_cities in 
+  let average_size_test = "average_size_test -> " 
+    ^ tester "11796143.75" graph#average_size in 
+  let smallest_city_test = "smallest_city_test -> " 
+    ^ tester "Essen - population : 589900" graph#smallest_city in 
+  let biggest_city_test = "biggest_city_test -> " 
+    ^ tester "Tokyo - population: 34000000" graph#biggest_city in 
+  let average_distance_test = "average_distance_test -> " 
+    ^ tester "2300.27659574" graph#average_distance in 
+  let shortest_distance_test = "shortest_distance_test -> " 
+    ^ tester "334" graph#shortest_distance in 
+  let longest_distance_test = "longest_distance_test -> " 
+    ^ tester "12051" graph#longest_distance in 
+  let city_code_test = "city_code_test -> " 
+    ^ tester "SCL" (List.hd_exn graph#metros)#code in 
+  let city_name_test = "city_name_test -> " 
+    ^ tester "Santiago" (List.hd_exn graph#metros)#name in 
+  let city_country_test = "city_country_test -> " 
+    ^ tester "CL" (List.hd_exn graph#metros)#country in 
+  let city_continent_test = "city_continent_test -> " 
+    ^ tester "South America" (List.hd_exn graph#metros)#continent in 
+  let flight_test = "flight_test -> " 
+    ^ tester "http://www.gcmap.com/mapui?P=LIM-MEX,+LIM-BOG,+MEX-LAX"
+             (parse_flight [|"asd";"LIM-MEX,LIM-BOG,MEX-LAX"|]) in 
+  tests ^ hub_cities_test ^ average_size_test ^ smallest_city_test ^
+  biggest_city_test ^ average_distance_test ^ shortest_distance_test ^
+  longest_distance_test ^ city_code_test ^ city_name_test ^ 
+  city_country_test ^ city_continent_test ^ flight_test
 
 (* Parse array of commands *)
 let parse_cmd cmds = 
