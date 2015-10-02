@@ -3,15 +3,17 @@ open Yojson.Basic.Util;;
 open Unix
 
 let help = "Usage:\n"
-         ^ "    city <city> <data_element> (* Gets <data_element> of a given <city>\n"
-         ^ "                                <data_element> -> (code, name, country, \n"
-         ^ "                                continent, timezone, coordinates, *)\n"
-         ^ "                                population, region, all) *)\n"
-         ^ "    network <stats|data> <stat_element> (* <data> -> Gets all cities CSAir flies to\n"
-         ^ "                                         <stats> -> <stat_element> -> (longest_distance,\n"
-         ^ "                                         shortest_distance, average_distance,\n"
-         ^ "                                         biggest_city, smallest_city, average_size\n"
-         ^ "                                         continents, hub_cities) *)"
+         ^ "\n    city <city> <data_element> (* Gets <data_element> of a given <city>"
+         ^ "\n                                <data_element> -> (code, name, country,"
+         ^ "\n                                continent, timezone, coordinates, *)"
+         ^ "\n                                population, region, all) *)"
+         ^ "\n    network <stats|data> <stat_element> (* <data> -> Gets all cities CSAir flies to"
+         ^ "\n                                         <stats> -> <stat_element> -> (longest_distance,"
+         ^ "\n                                         shortest_distance, average_distance,"
+         ^ "\n                                         biggest_city, smallest_city, average_size"
+         ^ "\n                                         continents, hub_cities) *)"
+         ^ "\n    flight <routes> (* <routes> -> a route to be represented on gcmap.com"
+         ^ "\n                       routes ex: LIM-MEX,LIM-BOG,MEX-LAX *)"
 
 (* Class representing a datasource object *)
 class data_source (url_string : string) = object(self : 'self)
@@ -231,12 +233,20 @@ let parse_network cmds =
                        (List.map graph#metros ~f:(fun x -> x#name)))
   | _       -> help
 
+(* Parses flight as first element in cli *)
+let parse_flight cmds = 
+  if 2 >  Array.length cmds then help else
+  let flights = String.split cmds.(1) ',' in 
+  let gcmap_url = "http://www.gcmap.com/mapui?P=" in 
+  gcmap_url ^ String.concat ~sep:",+" flights
+
 (* Parse array of commands *)
 let parse_cmd cmds = 
   if 0 = Array.length cmds then help else
   match cmds.(0) with
   | "network" -> parse_network cmds 
   | "city"    -> parse_city cmds
+  | "flight"  -> parse_flight cmds
   | _         -> help
 
 (* Main cli loop *)
