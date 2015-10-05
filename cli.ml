@@ -12,8 +12,20 @@ let help = "Usage:\n"
          ^ "\n                                         shortest_distance, average_distance,"
          ^ "\n                                         biggest_city, smallest_city, average_size"
          ^ "\n                                         continents, hub_cities) *)"
-         ^ "\n    flight <routes> (* <routes> -> a route to be represented on gcmap.com"
+         ^ "\n    flight <routes|all> (* <routes> -> a route to be represented on gcmap.com"
          ^ "\n                       routes ex: LIM-MEX,LIM-BOG,MEX-LAX *)"
+         ^ "\n    save (* Saves all changes in current state *)"
+         ^ "\n    undo (* Undo all prior changes to the graph *)"
+         ^ "\n    modify <edit|add|remove> <city|route> <city_name> <element> <value>"
+         ^ "\n              <route_distance> <route_route>"
+         ^ "\n          note: adding city should have city elements in order as: "
+         ^ "\n          code name country continent timezone coordinates population region"
+         ^ "\n          note: coords should be seperated by :'s"
+         ^ "\n          note: routes should be seperated by -'s"
+         ^ "\n          note: multiple words should be seperated by _'s"
+         ^ "\n          ex: modify edit city Santiago coordinates N:2:S:3"
+         ^ "\n          ex: modify add route <route_distance> <route_route>"
+         ^ "\n          ex: modify add city TCY TestCity TZ Africa 3.0 N:23:S:43 234 1"
          ^ "\n    tests (* Run tests *)"
 
 (* Class representing a datasource object *)
@@ -200,6 +212,88 @@ let split_words words =
      split start (index+1) in
  Array.of_list (split 0 0);;
 
+(* Edits cities in file *)
+let edit_city cmds = 
+  if 6 > Array.length cmds then help else
+  let city_name = cmds.(3) in 
+  let element   = cmds.(4) in 
+  let value     = cmds.(5) in 
+  let cmd = "./edit_json.py --file map_data.json --type modify --city " ^ city_name 
+            ^ " --element " ^ element ^ " --value " ^ value in 
+  let ec = (Sys.command cmd) in 
+  match ec with
+  | 0 -> "Successfully modified " ^ city_name ^ " data."
+  | _ -> "Error modifying city " ^ city_name ^ "."
+
+(* Adds a city *)
+let add_city cmds = 
+  if 11 > Array.length cmds then help else
+  let code        = cmds.(3) in 
+  let name        = cmds.(4) in 
+  let country     = cmds.(5) in 
+  let continent   = cmds.(6) in 
+  let timezone    = cmds.(7) in 
+  let coordinates = cmds.(8) in 
+  let population  = cmds.(9) in 
+  let region      = cmds.(10) in 
+  let cmd = "./edit_json.py --file map_data.json --type add --code " ^ code 
+            ^ " --name " ^ name ^ " --country " ^ country ^ " --continent "
+            ^ continent ^ " --timezone " ^ timezone ^ " --coordinates " 
+            ^ coordinates ^ " --population " ^ population ^ " --region "
+            ^ region in
+  let ec = (Sys.command cmd) in
+  match ec with
+  | 0 -> "Successfully added city " ^ name ^ "."
+  | _ -> "Error adding city " ^ name ^ "."
+
+(* Removes a city *)
+let remove_city cmds = 
+  if 4 > Array.length cmds then help else
+  let city_name = cmds.(3) in 
+  let cmd = "./edit_json.py --file map_data.json --type remove --city " ^ city_name in
+  let ec = (Sys.command cmd) in
+  match ec with
+  | 0 -> "Successfully removed " ^ city_name ^ "."
+  | _ -> "Error removing city " ^ city_name ^ "."
+
+(* Adds a route *)
+let add_route cmds = 
+  if 5 > Array.length cmds then help else
+  let distance = cmds.(3) in 
+  let route    = cmds.(4) in 
+  let cmd      = "./edit_json.py --file map_data.json --type add --route " ^ route 
+            ^ " --distance " ^ distance in 
+  let ec = (Sys.command cmd) in
+  match ec with
+  | 0 -> "Successfully added " ^ route ^ "."
+  | _ -> "Error adding route " ^ route ^ "."
+
+(* Removes a route *)
+let remove_route cmds = 
+  if 4 > Array.length cmds then help else
+  let route = cmds.(3) in 
+  let cmd   = "./edit_json.py --file map_data.json --type remove --route " ^ route in
+  let ec    = (Sys.command cmd) in
+  match ec with
+  | 0 -> "Successfully removed " ^ route ^ "."
+  | _ -> "Error removing route " ^ route ^ "."
+
+(* Parses adding data *)
+let parse_add_data cmds = 
+  if 4 > Array.length cmds then help else
+  match cmds.(2) with
+  | "route" -> add_route cmds
+  | "city"  -> add_city cmds
+  | _       -> "Not yet Implemented"
+
+(* Parses removal *)
+let parse_remove_data cmds = 
+  if 4 > Array.length cmds then help else
+  match cmds.(2) with
+  | "city"  -> remove_city cmds
+  | "route" -> remove_route cmds
+  | _       -> help
+
 (* Parses city as first element in cli *)
 let parse_city cmds= 
   if 3 >  Array.length cmds then help else
@@ -251,12 +345,46 @@ let parse_network cmds =
                        (List.map graph#metros ~f:(fun x -> x#name)))
   | _       -> help
 
+(* Parses flight routes as second element in cli *)
+let parse_flight_routes cmds gcmap_url= 
+  if 3 >  Array.length cmds then help else
+  let flights = String.split cmds.(3) ',' in 
+  gcmap_url ^ String.concat ~sep:",+" flights
+
 (* Parses flight as first element in cli *)
 let parse_flight cmds = 
   if 2 >  Array.length cmds then help else
-  let flights = String.split cmds.(1) ',' in 
   let gcmap_url = "http://www.gcmap.com/mapui?P=" in 
-  gcmap_url ^ String.concat ~sep:",+" flights
+  let all_routes = List.map graph#routes ~f:(fun r -> List.hd_exn r#ports ^ "-" ^ List.last_exn r#ports) in 
+    match cmds.(1) with
+    | "routes" ->  parse_flight_routes cmds gcmap_url
+    | "all" -> gcmap_url ^ String.concat ~sep:",+" all_routes
+    | _ -> help
+
+(* Parses modify as first element in cli *)
+let parse_modify cmds = 
+  if 2 > Array.length cmds then help else
+  match cmds.(1) with 
+  | "edit"   -> edit_city cmds
+  | "remove" -> parse_remove_data cmds
+  | "add"    -> parse_add_data cmds
+  | _        -> "Not yet implemented"
+
+(* Parses undo as first element in cli *)
+let parse_undo cmds= 
+  let cmd = "rm map_data.json && rm map_data.backup.json && "
+             ^ "cp map_data.truebackup map_data.json && cp map_data.truebackup map_data.backup" in 
+  let ec = (Sys.command cmd) in
+  match ec with
+  | 0 -> "Undone!"
+  | _ -> "Error undoing file!"
+
+(* Parses save as first element in cli *)
+let parse_save cmds= 
+  let ec = (Sys.command "rm map_data.backup.json && cp map_data.json map_data.backup.json") in
+  match ec with
+  | 0 -> "Saved!"
+  | _ -> "Error saving file!"
 
 (* Run test cases *)
 let run_tests = 
@@ -287,7 +415,7 @@ let run_tests =
     ^ tester "South America" (List.hd_exn graph#metros)#continent in 
   let flight_test = "flight_test -> " 
     ^ tester "http://www.gcmap.com/mapui?P=LIM-MEX,+LIM-BOG,+MEX-LAX"
-             (parse_flight [|"asd";"LIM-MEX,LIM-BOG,MEX-LAX"|]) in 
+             (parse_flight [|"asd";"routes";"asd";"LIM-MEX,LIM-BOG,MEX-LAX"|]) in 
   tests ^ hub_cities_test ^ average_size_test ^ smallest_city_test ^
   biggest_city_test ^ average_distance_test ^ shortest_distance_test ^
   longest_distance_test ^ city_code_test ^ city_name_test ^ 
@@ -299,13 +427,18 @@ let parse_cmd cmds =
   match cmds.(0) with
   | "network" -> parse_network cmds 
   | "city"    -> parse_city cmds
+  | "modify"  -> parse_modify cmds
   | "flight"  -> parse_flight cmds
   | "tests"   -> run_tests 
+  | "save"    -> parse_save cmds
+  | "undo"    -> parse_undo cmds
   | _         -> help
 
 (* Main cli loop *)
 let cli =
   try
+    let ec = (Sys.command "cp map_data.json map_data.backup.json") in 
+    if phys_equal ec 1 then print_string "Error" else
     while true do
       print_string "CSAir $ ";
       let cmd = read_line () in 
@@ -313,7 +446,9 @@ let cli =
       let response = parse_cmd cmds in 
       printf "%s\n" (response);
     done
-  with End_of_file -> ()
+  with End_of_file -> 
+    match (Sys.command "cp map_data.backup.json map_data.json && rm map_data.backup.json") with
+    | _ -> ()
 
 let () = 
   cli 
