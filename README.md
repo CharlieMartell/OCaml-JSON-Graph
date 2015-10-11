@@ -1,1 +1,1 @@
-Graph Library for Representing JSON Data in Graphs written in OCaml :camel:
+This project reads in JSON data using YoJson and Jane Steet Core to parse information and statistical data about flights in the json data. It presents a cli for getting information about the airport network.
